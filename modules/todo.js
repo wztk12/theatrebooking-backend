@@ -1,9 +1,6 @@
 'use strict'
 
 const users = []
-//const mongoose = require('mongoose')
-//const uri = 'mongodb+srv://zatonskw:tO3tPa2yBALIiNhm@theatrebookingwz-hhqjx.mongodb.net/test?retryWrites=true'
-
 
 module.exports.register = async request => {
 	const userData = await this.extractBodyData(request)
@@ -11,4 +8,4 @@ module.exports.register = async request => {
 	return userData
 }
 
-module.exports.extractBodyData = async request => ({email: request.body.email, pwd: request.body.pwd})
+module.exports.extractBodyData = async request => ({email: request.body.email, password: request.body.password})

@@ -16,20 +16,20 @@ describe('/register', () => {
 
 	test('adding a single user', async done => {
 		await request(server).post('/register')
-			.send({email: 'test@test.com', pwd: 'test'})
+			.send({email: 'test@test.com', password: 'test'})
 			.set('Accept', 'application/json')
 			.expect(status.CREATED)
 			.expect( res => {
 				res.body.status = 'success'
 				res.body.message.item.email = 'test@test.com'
-				res.body.message.item.pwd = 'test'
+				res.body.message.item.password = 'test'
       	done()
 			})
 	})
 
 	test('handling a database error', async done => {
 		const response = await request(server).post('/register')
-			.send({username: 'test', pwd: 'test'})
+			.send({username: 'test', password: 'test'})
 			.set('error', 'foo')
 			.expect(status.BAD_REQUEST)
 		const data = JSON.parse(response.text)
