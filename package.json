@@ -36,17 +36,18 @@
   "license": "ISC",
   "dependencies": {
     "csprng": "^0.1.2",
+    "dotenv": "^6.1.0",
     "eslint": "^5.9.0",
     "http-status-codes": "^1.3.0",
     "koa": "^2.6.1",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
-    "mongoose": "^5.3.11"
+    "mongodb-memory-server": "^2.7.3",
+    "mongoose": "^5.3.13",
+    "mongoose-unique-validator": "^2.0.2"
   },
   "devDependencies": {
     "jest": "^23.6.0",
-    "pre-commit": "^1.2.2",
-    "pre-push": "^0.1.1",
     "supertest": "^3.3.0"
   }
 }
