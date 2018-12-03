@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --coverage",
     "watch": "node_modules/.bin/jest --coverage --watchAll",
-    "lint": "node_modules/.bin/eslint . --fix"
+    "lint": "node_modules/.bin/eslint . --fix",
+    "dependency": "node_modules/.bin/dependency-check ./package.json"
   },
   "jest": {
     "testEnvironment": "node",
@@ -36,6 +37,7 @@
     "mongoose-unique-validator": "^2.0.2"
   },
   "devDependencies": {
+    "dependency-check": "^3.2.1",
     "jest": "^23.6.0",
     "supertest": "^3.3.0"
   }
