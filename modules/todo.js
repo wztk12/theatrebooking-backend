@@ -1,14 +1,9 @@
 'use strict'
 
-const users = []
-//const mongoose = require('mongoose')
-//const uri = 'mongodb+srv://zatonskw:tO3tPa2yBALIiNhm@theatrebookingwz-hhqjx.mongodb.net/test?retryWrites=true'
+module.exports.getCredentials = header => {
+	const [, hash] = header.split(' ')
+	const plainText = Buffer.from(hash, 'base64').toString()
+	const [email, pass] = plainText.split(':')
+	return {email: email, password: pass}
 
-
-module.exports.register = async request => {
-	const userData = await this.extractBodyData(request)
-	users.push(userData)
-	return userData
 }
-
-module.exports.extractBodyData = async request => ({email: request.body.email, pwd: request.body.pwd})

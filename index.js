@@ -3,6 +3,7 @@
 'use strict'
 
 const Koa = require('koa')
+require('dotenv').config()
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 
@@ -12,9 +13,12 @@ const router = new Router()
 
 const status = require('http-status-codes')
 
-const todo = require('./modules/todo.js')
+const db = require('./modules/dbHandler')
+db.connect(process.env.mongoUri)
+const todo = require('./modules/todo')
 
 const port = 8080
+
 
 app.use( async(ctx, next) => {
 	ctx.set('Access-Control-Allow-Origin', '*')
@@ -22,13 +26,39 @@ app.use( async(ctx, next) => {
 	await next()
 })
 
+router.head('/users/:id', async ctx => {
+	try {
+		const creds = ctx.get('Authorization')
+		if(ctx.get('Authorization').length === 0) throw new Error('missing Authorization')
+		const credentials = await todo.getCredentials(creds)
+		const valid = await db.checkAuth(credentials.email, credentials.password)
+		if(valid === 'UNAUTHORIZED') throw new Error('invalid Authorization')
+		ctx.status = status.OK
+		ctx.body = {status: 'ok', message: 'login successful'}
+	} catch(err) {
+		ctx.status = status.UNAUTHORIZED
+		ctx.body = {status: 'error', message: err.message}
+	}
+})
+
+
 router.post('/register', async ctx => {
 	ctx.set('Allow', 'GET, POST')
 	try {
 		if(ctx.get('error')) throw new Error(ctx.get('error'))
-		const item = await todo.register(ctx.request)
-		ctx.status = status.CREATED
-		ctx.body = {status: 'success', message: {item: item}}
+		const userData = {
+			email: ctx.request.body.email,
+			password: ctx.request.body.password
+		}
+		await db.addUser(userData)
+			.then(res => {
+				ctx.status = status.CREATED
+				ctx.body = {status: 'success', message: res}
+			})
+			.catch(err => {
+				ctx.status = status.BAD_REQUEST
+				ctx.body = {status: 'error', message: err.message}
+			})
 	} catch(err) {
 		ctx.status = status.BAD_REQUEST
 		ctx.body = {status: 'error', message: err.message}
@@ -37,6 +67,8 @@ router.post('/register', async ctx => {
 
 app.use(router.routes())
 app.use(router.allowedMethods())
-const server = app.listen(port)
+const server = app.listen(port, () => {
+	console.log('app is listening on ' + port)
+})
 
 module.exports = server
