@@ -1,17 +1,15 @@
-
 'use strict'
 
-/* eslint-disable no-magic-numbers */
+const todo = require('../modules/todo')
 
-const todo = require('../modules/todo.js')
+describe('getCredentials', () => {
 
-describe('register', () => {
-
-	test('registering an user', async done => {
-		const request = {body: {email: 'test@test.com', pwd: 'test'}}
-		const data = await todo.register(request)
-		expect(data.email).toBe('test@test.com')
-		expect(data.pwd).toBe('test')
+	test('properly reads the credentials', async done => {
+		const hash = Buffer.from('test@test.com:password').toString('base64')
+		const header = `Basic ${hash}`
+		const data = await todo.getCredentials(header)
+		expect(data).toEqual({email: 'test@test.com', password: 'password'})
 		done()
+
 	})
 })

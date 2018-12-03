@@ -6,20 +6,8 @@
   "scripts": {
     "test": "jest --coverage",
     "watch": "node_modules/.bin/jest --coverage --watchAll",
-    "lint": "node_modules/.bin/eslint . --fix",
-    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
-    "prepush-msg": "echo 'Pre-push checks...' && exit 0"
+    "lint": "node_modules/.bin/eslint . --fix"
   },
-  "pre-commit": [
-    "precommit-msg",
-    "lint",
-    "test"
-  ],
-  "pre-push": [
-    "prepush-msg",
-    "lint",
-    "test"
-  ],
   "jest": {
     "testEnvironment": "node",
     "verbose": true,
@@ -35,18 +23,20 @@
   "author": "Wiktor Zatonski",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.2",
     "csprng": "^0.1.2",
+    "dotenv": "^6.1.0",
+    "eslint": "^5.9.0",
     "http-status-codes": "^1.3.0",
     "koa": "^2.6.1",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
-    "mongoose": "^5.3.11"
+    "mongodb-memory-server": "^2.7.3",
+    "mongoose": "^5.3.13",
+    "mongoose-unique-validator": "^2.0.2"
   },
   "devDependencies": {
-    "eslint": "^5.8.0",
     "jest": "^23.6.0",
-    "pre-commit": "^1.2.2",
-    "pre-push": "^0.1.1",
     "supertest": "^3.3.0"
   }
 }
