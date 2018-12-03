@@ -6,20 +6,8 @@
   "scripts": {
     "test": "jest --coverage",
     "watch": "node_modules/.bin/jest --coverage --watchAll",
-    "lint": "node_modules/.bin/eslint . --fix",
-    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
-    "prepush-msg": "echo 'Pre-push checks...' && exit 0"
+    "lint": "node_modules/.bin/eslint . --fix"
   },
-  "pre-commit": [
-    "precommit-msg",
-    "lint",
-    "test"
-  ],
-  "pre-push": [
-    "prepush-msg",
-    "lint",
-    "test"
-  ],
   "jest": {
     "testEnvironment": "node",
     "verbose": true,
@@ -35,6 +23,7 @@
   "author": "Wiktor Zatonski",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.2",
     "csprng": "^0.1.2",
     "dotenv": "^6.1.0",
     "eslint": "^5.9.0",

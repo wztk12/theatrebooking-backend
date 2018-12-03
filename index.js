@@ -15,6 +15,7 @@ const status = require('http-status-codes')
 
 const db = require('./modules/dbHandler')
 db.connect(process.env.mongoUri)
+const todo = require('./modules/todo')
 
 const port = 8080
 
@@ -24,6 +25,22 @@ app.use( async(ctx, next) => {
 	ctx.set('content-type', 'application/json')
 	await next()
 })
+
+router.head('/users/:id', async ctx => {
+	try {
+		const creds = ctx.get('Authorization')
+		if(ctx.get('Authorization').length === 0) throw new Error('missing Authorization')
+		const credentials = await todo.getCredentials(creds)
+		const valid = await db.checkAuth(credentials.email, credentials.password)
+		if(valid === 'UNAUTHORIZED') throw new Error('invalid Authorization')
+		ctx.status = status.OK
+		ctx.body = {status: 'ok', message: 'login successful'}
+	} catch(err) {
+		ctx.status = status.UNAUTHORIZED
+		ctx.body = {status: 'error', message: err.message}
+	}
+})
+
 
 router.post('/register', async ctx => {
 	ctx.set('Allow', 'GET, POST')

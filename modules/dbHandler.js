@@ -2,34 +2,51 @@
 
 const mongoose = require('mongoose')
 const User = require('../models/User')
-mongoose.set('useCreateIndex', true) //needed to add that to avoid deprecated unique use
+const LoginData = require('../models/LoginData')
+mongoose.set('useCreateIndex', true) //needed to add that to avoid using deprecated unique attribute
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 
-module.exports.connect = mongoUri => {
-	return mongoose.connect(mongoUri, {useNewUrlParser: true})
+module.exports.connect = mongoUri => mongoose.connect(mongoUri, {useNewUrlParser: true})
 	.then(res => {
-		const message = "Database connected"
+		const message = 'Database connected'
 		console.log(message)
 		return res
 	})
 	.catch(err => {
 		throw new Error(err)
 	})
-}
 
 module.exports.addUser = async userData => {
-	let encryptedPassword = await bcrypt.hash(userData.password, saltRounds)
+	const encryptedPassword = await bcrypt.hash(userData.password, saltRounds)
 	const user = new User({
 		_id: new mongoose.Types.ObjectId(),
 		email: userData.email,
 		password: encryptedPassword
 	})
 	return user.save()
-		.then(res => {
-			return res
-		})
+		.then(res => res)
 		.catch( () => {
-		throw new Error('user exists')
-	})
+			throw new Error('user exists')
+		})
 }
+
+module.exports.checkAuth = async(email, password) => User.findOne({email: email})
+	  .then( async res => {
+		const validatedPw = await bcrypt.compare(password, res.password)
+		if(!validatedPw) throw new Error() //will be catched by the catch clause of promise and handled
+	  })
+	  .then(async() => {
+		  const loginData = new LoginData({
+			  email: email
+		  })
+		  await loginData.save()
+		  return loginData
+	  })
+	  .catch(async() => 'UNAUTHORIZED')
+
+module.exports.getId = async email => User.findOne({email: email})
+	.then( res => res._id)
+	.catch(err => {
+		throw err
+	})
