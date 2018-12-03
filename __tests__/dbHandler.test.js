@@ -20,7 +20,7 @@ afterAll(() => {
 })
 
 describe('connect', () => {
-	
+
 	test('normal connection', async done => {
 		const mongoUri = await mongoServer.getConnectionString()
 		db.connect(mongoUri)
@@ -42,7 +42,7 @@ describe('connect', () => {
 	})
 })
 describe('addUser', () => {
-	
+
 	test('adding an user', async done => {
 		const userData = {
 			email: 'test@test.com',
@@ -71,7 +71,7 @@ describe('addUser', () => {
 })
 
 describe('checkAuth', () => {
-	
+
 	test('valid username and password saves logindata', async done => {
 		const userData = {
 			email: 'validation@test.com',
@@ -80,9 +80,9 @@ describe('checkAuth', () => {
 		await db.addUser(userData)
 		await db.checkAuth(userData.email, userData.password)
 		await LoginData.countDocuments({email: userData.email})
-		.then(res =>{
-			expect(res).toBe(1)
-		})
+			.then(res => {
+				expect(res).toBe(1)
+			})
 		done()
 	})
 
@@ -106,5 +106,20 @@ describe('checkAuth', () => {
 		const data = await db.checkAuth(userData.email, 'unauthorized')
 		expect(data).toBe('UNAUTHORIZED')
 		done()
+	})
+})
+
+describe('getId', () => {
+	test('finding id of proper email', async done => {
+		await db.getId('test@test.com')
+		done()
+	})
+
+	test('finding id of non existent email', async done => {
+		await db.getId('non@existent.com')
+		  .catch(err => {
+			  expect(err).toBeInstanceOf(Error)
+			  done()
+		  })
 	})
 })

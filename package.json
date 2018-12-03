@@ -6,20 +6,8 @@
   "scripts": {
     "test": "jest --coverage",
     "watch": "node_modules/.bin/jest --coverage --watchAll",
-    "lint": "node_modules/.bin/eslint . --fix",
-    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
-    "prepush-msg": "echo 'Pre-push checks...' && exit 0"
+    "lint": "node_modules/.bin/eslint . --fix"
   },
-  "pre-commit": [
-    "precommit-msg",
-    "lint",
-    "test"
-  ],
-  "pre-push": [
-    "prepush-msg",
-    "lint",
-    "test"
-  ],
   "jest": {
     "testEnvironment": "node",
     "verbose": true,
