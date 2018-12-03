@@ -2,7 +2,8 @@
 
 const mongoose = require('mongoose')
 const User = require('../models/User')
-mongoose.set('useCreateIndex', true) //needed to add that to avoid deprecated unique use
+const LoginData = require('../models/LoginData')
+mongoose.set('useCreateIndex', true) //needed to add that to avoid using deprecated unique attribute 
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 
@@ -32,4 +33,22 @@ module.exports.addUser = async userData => {
 		.catch( () => {
 		throw new Error('user exists')
 	})
+}
+
+module.exports.checkAuth = async(email, password) => {
+	return User.findOne({email: email})
+	  .then( async res => {
+		const validatedPw = await bcrypt.compare(password, res.password)
+		if(!validatedPw) throw new Error()
+	  })
+	  .then(async () => {
+		  const loginData = new LoginData({
+			  email: email
+		  })
+		  await loginData.save()
+		  return loginData
+	  })
+	  .catch(async () => {
+		  return 'UNAUTHORIZED'
+	  })
 }
