@@ -29,13 +29,13 @@ afterAll(() => {
 describe('HEAD /users/:id', () => {
 
 	test('should return 401 if missing Authorization header', async done => {
-		await supertest.head('/users/0').expect(status.UNAUTHORIZED)
+		await supertest.head('/users').expect(status.UNAUTHORIZED)
 		done()
 	})
 
 	test('should return OK if valid Authorization header', async done => {
-		const id = await db.getId('test@test.com')
-		await supertest.head('/users/:' + id)
+		//const id = await db.getId('test@test.com')
+		await supertest.head('/users')
 			.auth('test@test.com', 'test')
 			.expect(status.OK)
 		done()
@@ -43,7 +43,7 @@ describe('HEAD /users/:id', () => {
 
 	test('should return 401 if the username is invalid', async done => {
 
-		await supertest.head('/users/0')
+		await supertest.head('/users')
 			.auth('janedoe', 'P455w0rd')
 			.expect(status.UNAUTHORIZED)
 		done()

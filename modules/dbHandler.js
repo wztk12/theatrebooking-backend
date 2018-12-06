@@ -3,6 +3,7 @@
 const mongoose = require('mongoose')
 const User = require('../models/User')
 const LoginData = require('../models/LoginData')
+const Show = require('../models/Show')
 mongoose.set('useCreateIndex', true) //needed to add that to avoid using deprecated unique attribute
 const bcrypt = require('bcrypt')
 const saltRounds = 10
@@ -14,7 +15,7 @@ module.exports.connect = mongoUri => mongoose.connect(mongoUri, {useNewUrlParser
 		return res
 	})
 	.catch(err => {
-		throw new Error(err)
+		throw err
 	})
 
 module.exports.addUser = async userData => {
@@ -50,3 +51,17 @@ module.exports.getId = async email => User.findOne({email: email})
 	.catch(err => {
 		throw err
 	})
+
+module.exports.addShow = async showData => {
+	const show = new Show({
+		title: showData.title,
+		imageUrl: showData.imageUrl,
+		date: showData.date,
+		description: showData.description
+	})
+	return show.save()
+	.then(res => res)
+		.catch( () => {
+			throw new Error('title exists')
+		})
+}

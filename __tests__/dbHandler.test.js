@@ -5,6 +5,7 @@ const {MongoMemoryServer} = require('mongodb-memory-server')
 const db = require('../modules/dbHandler')
 const User = require('../models/User')
 const LoginData = require('../models/LoginData')
+const Show = require('../models/Show')
 let mongoServer
 
 
@@ -110,6 +111,7 @@ describe('checkAuth', () => {
 })
 
 describe('getId', () => {
+	
 	test('finding id of proper email', async done => {
 		await db.getId('test@test.com')
 		done()
@@ -121,5 +123,38 @@ describe('getId', () => {
 			  expect(err).toBeInstanceOf(Error)
 			  done()
 		  })
+	})
+})
+
+describe('addMovie', () => {
+
+	test('adding valid movie', async done => {
+		const showData = {
+			title: 'Cindirella',
+			imageUrl: 'cindirella.png',
+			date: '06-12-2018 18:00',
+			description: 'Something about show Cindirella'
+		}
+		await db.addShow(showData)
+		await Show.countDocuments({title: 'Cindirella'})
+		.then(res => {
+			expect(res).toBe(1)
+			done()
+		})
+	})
+
+	test('adding movie that already exists', async done =>{
+		const showData = {
+			title: 'Big Bad Wolf',
+			imageUrl: 'bigbadwolf.png',
+			date: '06-12-2018 18:00',
+			description: 'Something about show Big Bad Wolf'
+		}
+		await db.addShow(showData)
+		await db.addShow(showData)
+			.catch(err => {
+				expect(err.message).toBe('title exists')
+				done()
+			})
 	})
 })

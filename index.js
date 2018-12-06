@@ -14,10 +14,12 @@ const router = new Router()
 const status = require('http-status-codes')
 
 const db = require('./modules/dbHandler')
-db.connect(process.env.mongoUri)
+db.connect(process.env.mongoUri) //connect gets intercepted by my test suite
 const todo = require('./modules/todo')
+const cors = require('@koa/cors')
+app.use(cors())
 
-const port = 8080
+const port = 3000
 
 
 app.use( async(ctx, next) => {
@@ -26,7 +28,8 @@ app.use( async(ctx, next) => {
 	await next()
 })
 
-router.head('/users/:id', async ctx => {
+router.head('/users', async ctx => {
+	ctx.set('Access-Control-Allow-Credentials', 'true')
 	try {
 		const creds = ctx.get('Authorization')
 		if(ctx.get('Authorization').length === 0) throw new Error('missing Authorization')
