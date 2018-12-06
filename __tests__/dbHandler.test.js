@@ -111,7 +111,7 @@ describe('checkAuth', () => {
 })
 
 describe('getId', () => {
-	
+
 	test('finding id of proper email', async done => {
 		await db.getId('test@test.com')
 		done()
@@ -137,13 +137,13 @@ describe('addMovie', () => {
 		}
 		await db.addShow(showData)
 		await Show.countDocuments({title: 'Cindirella'})
-		.then(res => {
-			expect(res).toBe(1)
-			done()
-		})
+			.then(res => {
+				expect(res).toBe(1)
+				done()
+			})
 	})
 
-	test('adding movie that already exists', async done =>{
+	test('adding movie that already exists', async done => {
 		const showData = {
 			title: 'Big Bad Wolf',
 			imageUrl: 'bigbadwolf.png',

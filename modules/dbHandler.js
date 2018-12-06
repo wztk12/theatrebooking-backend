@@ -60,7 +60,7 @@ module.exports.addShow = async showData => {
 		description: showData.description
 	})
 	return show.save()
-	.then(res => res)
+		.then(res => res)
 		.catch( () => {
 			throw new Error('title exists')
 		})
