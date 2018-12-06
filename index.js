@@ -22,7 +22,7 @@ app.use(cors())
 const port = 3000
 
 
-app.use( async(ctx, next) => {
+app.use(async (ctx, next) => {
 	ctx.set('Access-Control-Allow-Origin', '*')
 	ctx.set('content-type', 'application/json')
 	await next()
@@ -32,15 +32,15 @@ router.head('/users', async ctx => {
 	ctx.set('Access-Control-Allow-Credentials', 'true')
 	try {
 		const creds = ctx.get('Authorization')
-		if(ctx.get('Authorization').length === 0) throw new Error('missing Authorization')
+		if (ctx.get('Authorization').length === 0) throw new Error('missing Authorization')
 		const credentials = await todo.getCredentials(creds)
 		const valid = await db.checkAuth(credentials.email, credentials.password)
-		if(valid === 'UNAUTHORIZED') throw new Error('invalid Authorization')
+		if (valid === 'UNAUTHORIZED') throw new Error('invalid Authorization')
 		ctx.status = status.OK
-		ctx.body = {status: 'ok', message: 'login successful'}
-	} catch(err) {
+		ctx.body = { status: 'ok', message: 'login successful' }
+	} catch (err) {
 		ctx.status = status.UNAUTHORIZED
-		ctx.body = {status: 'error', message: err.message}
+		ctx.body = { status: 'error', message: err.message }
 	}
 })
 
@@ -48,7 +48,7 @@ router.head('/users', async ctx => {
 router.post('/register', async ctx => {
 	ctx.set('Allow', 'GET, POST')
 	try {
-		if(ctx.get('error')) throw new Error(ctx.get('error'))
+		if (ctx.get('error')) throw new Error(ctx.get('error'))
 		const userData = {
 			email: ctx.request.body.email,
 			password: ctx.request.body.password
@@ -56,15 +56,40 @@ router.post('/register', async ctx => {
 		await db.addUser(userData)
 			.then(res => {
 				ctx.status = status.CREATED
-				ctx.body = {status: 'success', message: res}
+				ctx.body = { status: 'success', message: res }
 			})
 			.catch(err => {
 				ctx.status = status.BAD_REQUEST
-				ctx.body = {status: 'error', message: err.message}
+				ctx.body = { status: 'error', message: err.message }
 			})
-	} catch(err) {
+	} catch (err) {
 		ctx.status = status.BAD_REQUEST
-		ctx.body = {status: 'error', message: err.message}
+		ctx.body = { status: 'error', message: err.message }
+	}
+})
+
+router.post('/addShow', async ctx => {
+	ctx.set('Allow', 'GET, POST')
+	try {
+		if (ctx.get('error')) throw new Error(ctx.get('error'))
+		const show = {
+			title: ctx.request.body.title,
+			imageUrl: ctx.request.body.imageUrl,
+			date: ctx.request.body.date,
+			description: ctx.request.body.description
+		}
+		await db.addShow(show)
+			.then(res => {
+				ctx.status = status.CREATED
+				ctx.body = { status: 'success', message: res }
+			})
+			.catch(err => {
+				ctx.status = status.BAD_REQUEST
+				ctx.body = { status: 'error', message: err.message }
+			})
+	} catch (err) {
+		ctx.status = status.BAD_REQUEST
+		ctx.body = { status: 'error', message: err.message }
 	}
 })
 

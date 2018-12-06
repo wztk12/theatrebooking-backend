@@ -16,6 +16,7 @@ beforeAll(async() => {
 	process.env.mongoUri = mongoUri
 	await db.connect(process.env.mongoUri)
 	await db.addUser({email: 'test@test.com', password: 'test'})
+	await db.addShow({title: 'Big Bad Wolf', imageUrl: 'bigbadwolf.png', date: '06-12-2018 18:00', description: 'Something about show Big Bad Wolf'})
 })
 
 // close the server after each test
@@ -83,6 +84,45 @@ describe('POST /register', () => {
 	test('handling a database error', async done => {
 		const response = await request(server).post('/register')
 			.send({email: 'test@test.com', password: 'test'})
+			.set('error', 'foo')
+			.expect(status.BAD_REQUEST)
+		const data = JSON.parse(response.text)
+		expect(data.message).toBe('foo')
+		done()
+	})
+})
+
+describe('POST /addShow', () => {
+
+	test('adding a proper show', async done => {
+		await request(server).post('/addShow')
+			.send({title: 'Cindirella', imageUrl: 'cindirella.png',
+			date: new Date('18:00 06-12-2018'), description: 'Something about show Cindirella'})
+			.set('Accept', 'application/json')
+			.expect(status.CREATED)
+			.expect( res => {
+				res.body.status = 'success'
+				res.body.message.title = 'Cindirella'
+				done()
+			})
+	})
+
+	test('adding a duplicate user', async done => {
+		await request(server).post('/addShow')
+		  .send({title: 'Big Bad Wolf', imageUrl: 'bigbadwolf.png', 
+		  date: new Date('18:00 06-12-2018'), description: 'Something about show Big Bad Wolf'})
+		  .set('Accept', 'application/json')
+		  .expect(status.BAD_REQUEST)
+		  .expect( res => {
+			  res.body.status = 'error'
+			  res.body.message = 'title exists'
+			  done()
+		  })
+	})
+
+	test('handling a database error', async done => {
+		const response = await request(server).post('/addShow')
+			.send({title: 'doesnt', imageUrl: 'matter'})
 			.set('error', 'foo')
 			.expect(status.BAD_REQUEST)
 		const data = JSON.parse(response.text)
