@@ -181,17 +181,17 @@ describe('findShow', () => {
 
 	test('finding an existing show', async done => {
 		await db.findShow('Big Bad Wolf')
-		.then(res => {
-			expect(res.length).toBe(1)
-			done()
-		})
+			.then(res => {
+				expect(res.length).toBe(1)
+				done()
+			})
 	})
 
 	test('trying to find non existing show', async done => {
 		await db.findShow('Non existent one')
-		.then(res=> {
-			expect(res.length).toBe(0)
-			done()
-		})
+			.then(res => {
+				expect(res.length).toBe(0)
+				done()
+			})
 	})
 })
