@@ -10,7 +10,7 @@ const server = require('../index.js')
 const supertest = request(server)
 const status = require('http-status-codes')
 
-beforeAll(async() => {
+beforeAll(async done => {
 	mongoServer = new MongoMemoryServer()
 	const mongoUri = await mongoServer.getConnectionString()
 	process.env.mongoUri = mongoUri
@@ -18,6 +18,7 @@ beforeAll(async() => {
 	await db.addUser({email: 'test@test.com', password: 'test'})
 	await db.addShow({title: 'Big Bad Wolf', imageUrl: 'bigbadwolf.png',
 		date: '06-12-2018 18:00', description: 'Something about show Big Bad Wolf'})
+	done()
 })
 
 // close the server after each test
@@ -28,7 +29,7 @@ afterAll(() => {
 	console.log('server closed!')
 })
 
-describe('HEAD /users/:id', () => {
+describe('HEAD /users', () => {
 
 	test('should return 401 if missing Authorization header', async done => {
 		await supertest.head('/users').expect(status.UNAUTHORIZED)
@@ -132,7 +133,7 @@ describe('POST /addShow', () => {
 	})
 })
 
-describe('dumpShows', () => {
+describe('GET /dumpShows', () => {
 
 	test('it dumps the data', async done => {
 		await request(server).get('/dumpShows')
@@ -153,3 +154,4 @@ describe('dumpShows', () => {
 		done()
 	})
 })
+

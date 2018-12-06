@@ -9,10 +9,18 @@ const Show = require('../models/Show')
 let mongoServer
 
 
-beforeAll(async() => {
+beforeAll(async done => {
 	mongoServer = new MongoMemoryServer()
 	const mongoUri = await mongoServer.getConnectionString()
 	await db.connect(mongoUri)
+	const showData = {
+		title: 'Big Bad Wolf',
+		imageUrl: 'bigbadwolf.png',
+		date: '06-12-2018 18:00',
+		description: 'Something about show Big Bad Wolf'
+	}
+	await db.addShow(showData)
+	done()
 })
 
 afterAll(() => {
@@ -151,7 +159,6 @@ describe('addMovie', () => {
 			description: 'Something about show Big Bad Wolf'
 		}
 		await db.addShow(showData)
-		await db.addShow(showData)
 			.catch(err => {
 				expect(err.message).toBe('title exists')
 				done()
@@ -167,5 +174,24 @@ describe('dumpShows', () => {
 				expect(res).toBeInstanceOf(Array)
 				done()
 			})
+	})
+})
+
+describe('findShow', () => {
+
+	test('finding an existing show', async done => {
+		await db.findShow('Big Bad Wolf')
+		.then(res => {
+			expect(res.length).toBe(1)
+			done()
+		})
+	})
+
+	test('trying to find non existing show', async done => {
+		await db.findShow('Non existent one')
+		.then(res=> {
+			expect(res.length).toBe(0)
+			done()
+		})
 	})
 })

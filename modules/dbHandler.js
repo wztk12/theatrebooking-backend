@@ -67,3 +67,5 @@ module.exports.addShow = async showData => {
 }
 
 module.exports.dumpShows = () => Show.find()
+
+module.exports.findShow = title => Show.find({title:title})
