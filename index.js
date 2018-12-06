@@ -98,15 +98,15 @@ router.get('/dumpShows', async ctx => {
 	try{
 		if (ctx.get('error')) throw new Error(ctx.get('error'))
 		await db.dumpShows()
-		.then(res => {
-			ctx.status = status.OK
-			ctx.body = { status: 'success', message: res }
-		})
+			.then(res => {
+				ctx.status = status.OK
+				ctx.body = { status: 'success', message: res }
+			})
 	} catch (err) {
 		ctx.status = status.BAD_REQUEST
 		ctx.body = {status: 'error', message: err.message }
 	}
-	
+
 })
 
 app.use(router.routes())
