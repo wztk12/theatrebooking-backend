@@ -131,3 +131,25 @@ describe('POST /addShow', () => {
 		done()
 	})
 })
+
+describe('dumpShows', () => {
+
+	test('it dumps the data', async done => {
+		await request(server).get('/dumpShows')
+			.expect(status.OK)
+			.expect(res => {
+				res.body.status = 'success'
+				expect(res.body.message).toBeInstanceOf(Array)
+				done()
+			})
+	})
+
+	test('it reacts to errors', async done => {
+		const response = await request(server).get('/dumpShows')
+			.set('error', 'foo')
+			.expect(status.BAD_REQUEST)
+			const data = JSON.parse(response.text)
+			expect(data.message).toBe('foo')
+			done()
+	})
+})
