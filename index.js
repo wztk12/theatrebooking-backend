@@ -22,7 +22,7 @@ app.use(cors())
 const port = 3000
 
 
-app.use(async (ctx, next) => {
+app.use(async(ctx, next) => {
 	ctx.set('Access-Control-Allow-Origin', '*')
 	ctx.set('content-type', 'application/json')
 	await next()

@@ -16,7 +16,8 @@ beforeAll(async() => {
 	process.env.mongoUri = mongoUri
 	await db.connect(process.env.mongoUri)
 	await db.addUser({email: 'test@test.com', password: 'test'})
-	await db.addShow({title: 'Big Bad Wolf', imageUrl: 'bigbadwolf.png', date: '06-12-2018 18:00', description: 'Something about show Big Bad Wolf'})
+	await db.addShow({title: 'Big Bad Wolf', imageUrl: 'bigbadwolf.png',
+		date: '06-12-2018 18:00', description: 'Something about show Big Bad Wolf'})
 })
 
 // close the server after each test
@@ -97,7 +98,7 @@ describe('POST /addShow', () => {
 	test('adding a proper show', async done => {
 		await request(server).post('/addShow')
 			.send({title: 'Cindirella', imageUrl: 'cindirella.png',
-			date: new Date('18:00 06-12-2018'), description: 'Something about show Cindirella'})
+				date: new Date('18:00 06-12-2018'), description: 'Something about show Cindirella'})
 			.set('Accept', 'application/json')
 			.expect(status.CREATED)
 			.expect( res => {
@@ -109,7 +110,7 @@ describe('POST /addShow', () => {
 
 	test('adding a duplicate user', async done => {
 		await request(server).post('/addShow')
-		  .send({title: 'Big Bad Wolf', imageUrl: 'bigbadwolf.png', 
+		  .send({title: 'Big Bad Wolf', imageUrl: 'bigbadwolf.png',
 		  date: new Date('18:00 06-12-2018'), description: 'Something about show Big Bad Wolf'})
 		  .set('Accept', 'application/json')
 		  .expect(status.BAD_REQUEST)
