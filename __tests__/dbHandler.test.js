@@ -163,9 +163,9 @@ describe('dumpShows', () => {
 
 	test('it dumps the shows', async done => {
 		await db.dumpShows()
-		.then(res => {
-			expect(res).toBeInstanceOf(Array)
-			done()
-		})
+			.then(res => {
+				expect(res).toBeInstanceOf(Array)
+				done()
+			})
 	})
 })
