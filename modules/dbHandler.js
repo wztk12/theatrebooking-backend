@@ -65,3 +65,5 @@ module.exports.addShow = async showData => {
 			throw new Error('title exists')
 		})
 }
+
+module.exports.dumpShows = () => Show.find()
