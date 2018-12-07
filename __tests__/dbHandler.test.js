@@ -180,7 +180,7 @@ describe('dumpShows', () => {
 describe('findShow', () => {
 
 	test('finding an existing show', async done => {
-		let id = await Show.findOne({title: 'Big Bad Wolf'}).then(res => res._id)
+		const id = await Show.findOne({title: 'Big Bad Wolf'}).then(res => res._id)
 		await db.findShow(id)
 			.then(res => {
 				expect(res.title).toBe('Big Bad Wolf')

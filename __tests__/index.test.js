@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const {MongoMemoryServer} = require('mongodb-memory-server')
 let mongoServer
 const db = require('../modules/dbHandler')
+const Show = require('../models/Show')
 const server = require('../index.js')
 const supertest = request(server)
 const status = require('http-status-codes')
@@ -155,3 +156,26 @@ describe('GET /dumpShows', () => {
 	})
 })
 
+describe('GET findShow/:id', () => {
+
+	test('proper show', async done => {
+		const id = await Show.findOne({title: 'Big Bad Wolf'}).then(res => res._id)
+		await request(server).get('/getShow/'+ id)
+			.expect(status.OK)
+			.expect(res => {
+				res.body.status = 'success'
+				expect(res.body.message).toBeInstanceOf(Object)
+				done()
+			})
+	})
+
+	test('catching errors', async done => {
+		const id = await Show.findOne({title: 'Big Bad Wolf'}).then(res => res._id)
+		const response = await request(server).get('/getShow/' + id)
+			.set('error', 'foo')
+			.expect(status.BAD_REQUEST)
+		const data = JSON.parse(response.text)
+		expect(data.message).toBe('foo')
+		done()
+	})
+})

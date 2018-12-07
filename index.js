@@ -109,6 +109,21 @@ router.get('/dumpShows', async ctx => {
 
 })
 
+router.get('/getShow/:id', async ctx => {
+	ctx.set('Allow', 'GET, POST')
+	try{
+		if (ctx.get('error')) throw new Error(ctx.get('error'))
+		await db.findShow(ctx.params.id)
+			.then(res => {
+				ctx.status = status.OK
+				ctx.body = { status: 'success', message: res }
+			})
+	} catch (err) {
+		ctx.status = status.BAD_REQUEST
+		ctx.body = {status: 'error', message: err.message }
+	}
+})
+
 app.use(router.routes())
 app.use(router.allowedMethods())
 const server = app.listen(port, () => {
