@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const User = require('../models/User')
 const LoginData = require('../models/LoginData')
 const Show = require('../models/Show')
+const Seat = require('../models/Seat')
 mongoose.set('useCreateIndex', true) //needed to add that to avoid using deprecated unique attribute
 const bcrypt = require('bcrypt')
 const saltRounds = 10
@@ -59,8 +60,14 @@ module.exports.addShow = async showData => {
 		date: showData.date,
 		description: showData.description
 	})
+	const seats = new Seat({
+		title: showData.title
+	})
 	return show.save()
-		.then(res => res)
+		.then(res => {
+			seats.save()
+			return res
+		})
 		.catch( () => {
 			throw new Error('title exists')
 		})
@@ -69,3 +76,10 @@ module.exports.addShow = async showData => {
 module.exports.dumpShows = () => Show.find()
 
 module.exports.findShow = id => Show.findById(id)
+
+module.exports.bookSeat = async (show, seat) => await Seat.updateOne({title: show},{$set: {[seat]: true}})
+	.then(res => {
+		if(res["nModified"]===0) throw new Error('couldnt update')
+	})
+
+

@@ -6,6 +6,7 @@ const db = require('../modules/dbHandler')
 const User = require('../models/User')
 const LoginData = require('../models/LoginData')
 const Show = require('../models/Show')
+const Seat = require('../models/Seat')
 let mongoServer
 
 
@@ -192,6 +193,28 @@ describe('findShow', () => {
 		await db.findShow(new mongoose.Types.ObjectId())
 			.then(res => {
 				expect(res).toBe(null)
+				done()
+			})
+	})
+})
+
+describe('bookSeat', () => {
+	
+	test('updates properly', async done => {
+		const title = 'Big Bad Wolf'
+		await db.bookSeat(title, 1)
+		Seat.findOne({title: title})
+		  .then(res => {
+			  expect(res["1"]).toBe(true)
+			  done()
+		  })
+	})
+
+	test('throws error on bad request', async done => {
+		const title = 'Non existent'
+		await db.bookSeat(title, 1)
+			.catch(err =>{
+				expect(err.message).toBe('couldnt update')
 				done()
 			})
 	})
