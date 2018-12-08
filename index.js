@@ -124,6 +124,21 @@ router.get('/getShow/:id', async ctx => {
 	}
 })
 
+router.put('/bookSeat/:show/:id', async ctx => {
+	ctx.set('Allow', 'GET, POST')
+	try{
+	const showTitle = await db.findShow(ctx.params.show).then(res => res['title'])
+	await db.bookSeat(showTitle, ctx.params.id)
+		.then(() => {
+			ctx.status = status.OK
+			ctx.body = {status: 'success', message: {title: showTitle, seat: ctx.params.id}}
+		})
+	} catch (err) {
+		ctx.status = status.BAD_REQUEST
+		ctx.body = {status: 'error', message: err.message }
+	}
+})
+
 app.use(router.routes())
 app.use(router.allowedMethods())
 const server = app.listen(port, () => {
