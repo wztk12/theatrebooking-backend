@@ -99,10 +99,6 @@ router.get('/dumpShows', async ctx => {
 		if (ctx.get('error')) throw new Error(ctx.get('error'))
 		await db.dumpShows()
 			.then(res => {
-				let i
-				for(i=0; i<res.length; i++ ){
-					res[i].date = new Date(res[i].date).toLocaleString()
-				}
 				ctx.status = status.OK
 				ctx.body = { status: 'success', message: res }
 			})
