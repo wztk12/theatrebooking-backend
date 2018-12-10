@@ -77,13 +77,13 @@ module.exports.dumpShows = () => Show.find()
 
 module.exports.findShow = id => Show.findById(id)
 
-module.exports.bookSeat = async (show, seat) => await Seat.updateOne({title: show},{$set: {[seat]: true}})
+module.exports.bookSeat = async(show, seat) => await Seat.updateOne({title: show},{$set: {[seat]: true}})
 	.then(res => {
-		if(res["nModified"]===0) throw new Error('couldnt update')
+		if(res['nModified']===0) throw new Error('couldnt update')
 	})
 
 
-module.exports.getSeats = async showTitle => await Seat.findOne({title: showTitle}).lean().then(res=> {
+module.exports.getSeats = async showTitle => await Seat.findOne({title: showTitle}).lean().then(res => {
 	delete res.title
 	delete res._id
 	delete res.__v

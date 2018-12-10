@@ -199,13 +199,13 @@ describe('findShow', () => {
 })
 
 describe('bookSeat', () => {
-	
+
 	test('updates properly', async done => {
 		const title = 'Big Bad Wolf'
 		await db.bookSeat(title, 1)
 		Seat.findOne({title: title})
 		  .then(res => {
-			  expect(res["1"]).toBe(true)
+			  expect(res['1']).toBe(true)
 			  done()
 		  })
 	})
@@ -213,7 +213,7 @@ describe('bookSeat', () => {
 	test('throws error on bad request', async done => {
 		const title = 'Non existent'
 		await db.bookSeat(title, 1)
-			.catch(err =>{
+			.catch(err => {
 				expect(err.message).toBe('couldnt update')
 				done()
 			})
@@ -221,7 +221,7 @@ describe('bookSeat', () => {
 })
 
 describe('getSeats', () => {
-	
+
 	test('gets the seats properly', async done => {
 		const title = 'Big Bad Wolf'
 		await db.getSeats(title).then(res => {
