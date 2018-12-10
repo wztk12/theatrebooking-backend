@@ -124,6 +124,21 @@ router.get('/getShow/:id', async ctx => {
 	}
 })
 
+router.get('/bookSeat/:show', async ctx => {
+	ctx.set('Allow', 'GET, POST')
+	try{
+		const showTitle = await db.findShow(ctx.params.show).then(res => res['title'])
+		await db.getSeats(showTitle)
+		.then(res => {
+			ctx.status = status.OK
+			ctx.body = {status: 'success', message: res}
+		}) 
+	} catch (err) {
+		ctx.status = status.BAD_REQUEST
+		ctx.body = {status: 'error', message: err.message }
+	}
+})
+
 router.put('/bookSeat/:show/:id', async ctx => {
 	ctx.set('Allow', 'GET, POST')
 	try{

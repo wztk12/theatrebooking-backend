@@ -219,3 +219,15 @@ describe('bookSeat', () => {
 			})
 	})
 })
+
+describe('getSeats', () => {
+	
+	test('gets the seats properly', async done => {
+		const title = 'Big Bad Wolf'
+		await db.getSeats(title).then(res => {
+			expect(res[4]).toBe(false)
+			expect(res['title']).toBe(undefined)
+			done()
+		})
+	})
+})

@@ -83,3 +83,9 @@ module.exports.bookSeat = async (show, seat) => await Seat.updateOne({title: sho
 	})
 
 
+module.exports.getSeats = async showTitle => await Seat.findOne({title: showTitle}).lean().then(res=> {
+	delete res.title
+	delete res._id
+	delete res.__v
+	return res
+})

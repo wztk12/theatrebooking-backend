@@ -202,3 +202,28 @@ describe('PUT /bookSeat/:show/:id', () => {
 			})
 	})
 })
+
+describe('GET bookSeat/:show', () => {
+
+	test('works with correct details', async done => {
+		const showId = await Show.findOne({title: 'Big Bad Wolf'}).then(res => res._id)
+		await request(server).get('/bookSeat/' + showId)
+			.expect(status.OK)
+			.expect(res => {
+				res.body.status = 'success'
+				res.body.message[2] = false
+				res.body.message.title = undefined
+				done()
+			})
+		})
+
+		test('it doesnt work for show that doesnt exist', async done => {
+			const showId = new mongoose.Types.ObjectId()
+			await request(server).get('/bookSeat/' + showId )
+				.expect(status.BAD_REQUEST)
+				.expect(res => {
+					res.body.status = 'error'
+					done()
+				})
+		})
+})
