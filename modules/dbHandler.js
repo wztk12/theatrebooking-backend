@@ -33,19 +33,19 @@ module.exports.addUser = async userData => {
 		})
 }
 
-module.exports.checkAuth = async (email, password) => User.findOne({ email: email })
+module.exports.checkAuth = async(email, password) => User.findOne({ email: email })
 	.then(async res => {
 		const validatedPw = await bcrypt.compare(password, res.password)
 		if (!validatedPw) throw new Error() //will be catched by the catch clause of promise and handled
 	})
-	.then(async () => {
+	.then(async() => {
 		const loginData = new LoginData({
 			email: email
 		})
 		await loginData.save()
 		return loginData
 	})
-	.catch(async () => 'UNAUTHORIZED')
+	.catch(async() => 'UNAUTHORIZED')
 
 module.exports.getId = async email => User.findOne({ email: email })
 	.then(res => res._id)
@@ -73,7 +73,7 @@ module.exports.addShow = async showData => {
 		})
 }
 
-module.exports.dumpShows = async () => await Show.find().lean().then(res => {
+module.exports.dumpShows = async() => await Show.find().lean().then(res => {
 	let i
 	for (i = 0; i < res.length; i++) {
 		res[i].date = new Date(res[i].date).toLocaleString()
@@ -88,7 +88,7 @@ module.exports.findShow = async id => await Show.findById(id).lean().then(res =>
 	return res
 })
 
-module.exports.bookSeat = async (show, seat) => await Seat.updateOne({ title: show }, { $set: { [seat]: true } })
+module.exports.bookSeat = async(show, seat) => await Seat.updateOne({ title: show }, { $set: { [seat]: true } })
 	.then(res => {
 		if (res['nModified'] === 0) throw new Error('couldnt update')
 	})
