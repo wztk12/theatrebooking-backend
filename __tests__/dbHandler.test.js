@@ -5,13 +5,23 @@ const {MongoMemoryServer} = require('mongodb-memory-server')
 const db = require('../modules/dbHandler')
 const User = require('../models/User')
 const LoginData = require('../models/LoginData')
+const Show = require('../models/Show')
+const Seat = require('../models/Seat')
 let mongoServer
 
 
-beforeAll(async() => {
+beforeAll(async done => {
 	mongoServer = new MongoMemoryServer()
 	const mongoUri = await mongoServer.getConnectionString()
 	await db.connect(mongoUri)
+	const showData = {
+		title: 'Big Bad Wolf',
+		imageUrl: 'bigbadwolf.png',
+		date: '06-12-2018 18:00',
+		description: 'Something about show Big Bad Wolf'
+	}
+	await db.addShow(showData)
+	done()
 })
 
 afterAll(() => {
@@ -110,6 +120,7 @@ describe('checkAuth', () => {
 })
 
 describe('getId', () => {
+
 	test('finding id of proper email', async done => {
 		await db.getId('test@test.com')
 		done()
@@ -121,5 +132,102 @@ describe('getId', () => {
 			  expect(err).toBeInstanceOf(Error)
 			  done()
 		  })
+	})
+})
+
+describe('addMovie', () => {
+
+	test('adding valid movie', async done => {
+		const showData = {
+			title: 'Cindirella',
+			imageUrl: 'cindirella.png',
+			date: '06-12-2018 18:00',
+			description: 'Something about show Cindirella'
+		}
+		await db.addShow(showData)
+		await Show.countDocuments({title: 'Cindirella'})
+			.then(res => {
+				expect(res).toBe(1)
+				done()
+			})
+	})
+
+	test('adding movie that already exists', async done => {
+		const showData = {
+			title: 'Big Bad Wolf',
+			imageUrl: 'bigbadwolf.png',
+			date: '06-12-2018 18:00',
+			description: 'Something about show Big Bad Wolf'
+		}
+		await db.addShow(showData)
+			.catch(err => {
+				expect(err.message).toBe('title exists')
+				done()
+			})
+	})
+})
+
+describe('dumpShows', () => {
+
+	test('it dumps the shows', async done => {
+		await db.dumpShows()
+			.then(res => {
+				expect(res).toBeInstanceOf(Array)
+				done()
+			})
+	})
+})
+
+describe('findShow', () => {
+
+	test('finding an existing show', async done => {
+		const id = await Show.findOne({title: 'Big Bad Wolf'}).then(res => res._id)
+		await db.findShow(id)
+			.then(res => {
+				expect(res.title).toBe('Big Bad Wolf')
+				done()
+			})
+	})
+
+	test('trying to find non-existing show', async done => {
+		await db.findShow(new mongoose.Types.ObjectId())
+			.then(res => {
+				expect(res).toBe(null)
+				done()
+			})
+	})
+})
+
+describe('bookSeat', () => {
+
+	test('updates properly', async done => {
+		const title = 'Big Bad Wolf'
+		await db.bookSeat(title, 1)
+		Seat.findOne({title: title})
+		  .then(res => {
+			  expect(res['1']).toBe(true)
+			  done()
+		  })
+	})
+
+	test('throws error on bad request', async done => {
+		const title = 'Non existent'
+		await db.bookSeat(title, 1)
+			.catch(err => {
+				expect(err.message).toBe('couldnt update')
+				done()
+			})
+	})
+})
+
+describe('getSeats', () => {
+
+	test('gets the seats properly', async done => {
+		const title = 'Big Bad Wolf'
+		await db.getSeats(title).then(res => {
+			expect(res[4]).toBe(false)
+			expect(res['title']).toBe(undefined)
+			done()
+		})
 	})
 })
