@@ -115,7 +115,6 @@ router.get('/getShow/:id', async ctx => {
 		if (ctx.get('error')) throw new Error(ctx.get('error'))
 		await db.findShow(ctx.params.id)
 			.then(res => {
-				res.date = new Date(res.date).toLocaleString()
 				ctx.status = status.OK
 				ctx.body = { status: 'success', message: res }
 			})
